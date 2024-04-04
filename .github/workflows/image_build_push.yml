@@ -49,11 +49,11 @@ jobs:
 
     - name: Write tag file 
       run: |
-        echo 'foo bar' > tag.txt
+        echo 'foo bar' > ${{ steps.date.outputs.date }}
 
     - uses: actions/upload-artifact@v4
       with:
-        name: Create tag artifact
+        name: server-image-tag
         path: tag.txt
         if-no-files-found: error
         overwrite: true
