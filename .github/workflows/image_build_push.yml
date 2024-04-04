@@ -38,11 +38,22 @@ jobs:
       run: echo running in repo ${GITHUB_REPOSITORY#*/} branch ${GITHUB_REF##*/} on ${{ steps.date.outputs.date }}
 
     # Runs a set of commands using the runners shell
-    - name: build docker image
-      run: |
-        docker build -t $DOCKER_USER/${GITHUB_REPOSITORY#*/}:${GITHUB_REF##*/}_${{ steps.date.outputs.date }} .
-        docker images
+    # - name: build docker image
+    #   run: |
+    #     docker build -t $DOCKER_USER/${GITHUB_REPOSITORY#*/}:${GITHUB_REF##*/}_${{ steps.date.outputs.date }} .
+    #     docker images
 
-    - name: push docker image
+    # - name: push docker image
+    #   run: |
+    #     docker push $DOCKER_USER/${GITHUB_REPOSITORY#*/}:${GITHUB_REF##*/}_${{ steps.date.outputs.date }}
+
+    - name: Write tag file 
       run: |
-        docker push $DOCKER_USER/${GITHUB_REPOSITORY#*/}:${GITHUB_REF##*/}_${{ steps.date.outputs.date }}
+        echo 'foo bar' > tag.txt
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: Create tag artifact
+        path: tag.txt
+        if-no-files-found: error
+        overwrite: true
