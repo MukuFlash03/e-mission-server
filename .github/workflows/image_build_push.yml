@@ -7,7 +7,7 @@ name: docker image
 # TODO: Change to master branch once changes are final.
 on:
   push:
-    branches: [ image-push-merge ]
+    branches: [ tags-artifact ]
 
 
 # Env variable
