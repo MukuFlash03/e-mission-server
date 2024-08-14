@@ -66,8 +66,8 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    # TODO: Create Fine-grained token with "Actions: write" permissions 
     - name: Trigger workflow in admin-dash, public-dash
-      # TODO: Create Fine-grained token with "Actions: write" permissions 
       run: |
         curl -L \
           -X POST \
