@@ -86,10 +86,10 @@ jobs:
     strategy:
       matrix:
         include:
-          - repo: e-mission/op-admin-dashboard
-            branch: master
-          - repo: e-mission/em-public-dashboard
-            branch: main
+          - repo: MukuFlash03/op-admin-dashboard
+            branch: cleanup-cicd
+          - repo: MukuFlash03/em-public-dashboard
+            branch: cleanup-cicd
 
     steps:
     - uses: actions/checkout@v4
