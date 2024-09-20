@@ -80,9 +80,6 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
 
-    env:
-      DOCKER_IMAGE_TAG: ${{ needs.build.outputs.date }}
-
     strategy:
       matrix:
         include:
@@ -102,4 +99,4 @@ jobs:
           -H "Authorization: Bearer ${{ secrets.GH_FG_PAT_TAGS }}" \
           -H "X-GitHub-Api-Version: 2022-11-28" \
           https://api.github.com/repos/${{ matrix.repo }}/actions/workflows/image_build_push.yml/dispatches \
-          -d '{"ref":"${{ matrix.branch }}", "inputs": {"docker_image_tag" : "${{ env.DOCKER_IMAGE_TAG }}"}}'
+          -d '{"ref":"${{ matrix.branch }}"}'
