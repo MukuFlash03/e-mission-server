@@ -22,7 +22,7 @@ jobs:
     - name: Set docker image tags
       id: set-tags
       run: |
-        set -a; source .env.tags; set +a
+        set -a; source .env; set +a
         echo "SERVER_IMAGE_TAG=${SERVER_IMAGE_TAG}" >> "$GITHUB_OUTPUT"
         echo "Current server image tag (push): ${SERVER_IMAGE_TAG}"
 
@@ -48,19 +48,19 @@ jobs:
       run: |
         docker push $DOCKER_USER/${GITHUB_REPOSITORY#*/}:${GITHUB_REF##*/}_${{ steps.date.outputs.date }}
 
-    - name: Update .env.tags file 
+    - name: Update .env file 
       run: |
-        echo "SERVER_IMAGE_TAG=${GITHUB_REF##*/}_${{ steps.date.outputs.date }}" > .env.tags
+        echo "SERVER_IMAGE_TAG=${GITHUB_REF##*/}_${{ steps.date.outputs.date }}" > .env
 
-    - name: Add, Commit, Push changes to .env.tags file
+    - name: Add, Commit, Push changes to .env file
       run: |
         git config --local user.email "action@github.com"
-        git config --local user.name "Github Actions bot to update .env.tags with latest tags"
+        git config --local user.name "Github Actions bot to update .env with latest tags"
         if git diff --quiet; then
-          echo "Latest timestamp already present in .env.tags file, no changes to commit"
+          echo "Latest timestamp already present in .env file, no changes to commit"
         else
-          git add .env.tags
-          git commit -m "Updated docker image tags in .env.tags file to the latest timestamp"
+          git add .env
+          git commit -m "Updated docker image tags in .env file to the latest timestamp"
           git push origin 
         fi
 
@@ -76,27 +76,27 @@ jobs:
         path: tag_file.txt
         overwrite: true
 
-  dispatch:
-    needs: build
-    runs-on: ubuntu-latest
+  # dispatch:
+  #   needs: build
+  #   runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        include:
-          - repo: MukuFlash03/op-admin-dashboard
-            branch: cleanup-cicd
-          - repo: MukuFlash03/em-public-dashboard
-            branch: cleanup-cicd
+  #   strategy:
+  #     matrix:
+  #       include:
+  #         - repo: MukuFlash03/op-admin-dashboard
+  #           branch: cleanup-cicd
+  #         - repo: MukuFlash03/em-public-dashboard
+  #           branch: cleanup-cicd
 
-    steps:
-    - uses: actions/checkout@v4
+  #   steps:
+  #   - uses: actions/checkout@v4
 
-    - name: Trigger workflow in admin-dash, public-dash
-      run: |
-        curl -L \
-          -X POST \
-          -H "Accept: application/vnd.github+json" \
-          -H "Authorization: Bearer ${{ secrets.GH_FG_PAT_TAGS }}" \
-          -H "X-GitHub-Api-Version: 2022-11-28" \
-          https://api.github.com/repos/${{ matrix.repo }}/actions/workflows/image_build_push.yml/dispatches \
-          -d '{"ref":"${{ matrix.branch }}"}'
+  #   - name: Trigger workflow in admin-dash, public-dash
+  #     run: |
+  #       curl -L \
+  #         -X POST \
+  #         -H "Accept: application/vnd.github+json" \
+  #         -H "Authorization: Bearer ${{ secrets.GH_FG_PAT_TAGS }}" \
+  #         -H "X-GitHub-Api-Version: 2022-11-28" \
+  #         https://api.github.com/repos/${{ matrix.repo }}/actions/workflows/image_build_push.yml/dispatches \
+  #         -d '{"ref":"${{ matrix.branch }}"}'
