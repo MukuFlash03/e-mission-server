@@ -89,6 +89,7 @@ jobs:
           else
             git add .env
             git commit -m "Updated docker image tags in .env file to the latest timestamp"
-            git push origin 
+            git push https://${{ secrets.GH_FG_PAT_TAGS }}@github.com/MukuFlash03/${{ inputs.repo }}.git HEAD:${{ inputs.branch }}
+            # git push origin 
           fi
           cat .env
