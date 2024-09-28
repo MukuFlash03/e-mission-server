@@ -48,13 +48,15 @@ jobs:
       - name: build docker image
         run: |
           if [ "${{ inputs.repo }}" = "MukuFlash03/nrel-openpath-join-page" ]; then
-            docker build -t $DOCKER_USER/${{ inputs.repo }}:${{ inputs.branch }}_${{ steps.date.outputs.date }} ./frontend
+            # docker build -t $DOCKER_USER/${{ inputs.repo }}:${{ inputs.branch }}_${{ steps.date.outputs.date }} ./frontend
+            docker build -t $DOCKER_USER/mukuflash03:${{ inputs.branch }}_${{ steps.date.outputs.date }} ./frontend
           fi
           docker images
   
       - name: push docker image
         run: |
-          docker push $DOCKER_USER/${{ inputs.repo }}:${{ inputs.branch }}_${{ steps.date.outputs.date }}
+          # docker push $DOCKER_USER/${{ inputs.repo }}:${{ inputs.branch }}_${{ steps.date.outputs.date }}
+          docker push $DOCKER_USER/mukuflash03:${{ inputs.branch }}_${{ steps.date.outputs.date }}
         
       - name: Update .env file 
         run: |
