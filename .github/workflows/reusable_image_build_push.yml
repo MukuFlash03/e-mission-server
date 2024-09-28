@@ -47,7 +47,7 @@ jobs:
 
       - name: build docker image
         run: |
-          if [ "${{ inputs.repo }}" = MukuFlash03/nrel-openpath-join-page" ]; then
+          if [ "${{ inputs.repo }}" = "MukuFlash03/nrel-openpath-join-page" ]; then
             docker build -t $DOCKER_USER/${{ inputs.repo }}:${{ inputs.branch }}_${{ steps.date.outputs.date }} ./frontend
           fi
           docker images
@@ -58,7 +58,7 @@ jobs:
         
       - name: Update .env file 
         run: |
-          if [ "${{ inputs.repo }}" = MukuFlash03/nrel-openpath-join-page" ]; then
+          if [ "${{ inputs.repo }}" = "MukuFlash03/nrel-openpath-join-page" ]; then
             echo "JOIN_IMAGE_TAG=${{ inputs.branch }}_${{ steps.date.outputs.date }}" > .env
           # elif [ "${{ inputs.repo }}" = "MukuFlash03/op-admin-dashboard" ]; then
           #   echo "SERVER_IMAGE_TAG=${{ steps.get-server-tag.outputs.SERVER_IMAGE_TAG }}" >> .env
