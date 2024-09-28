@@ -23,6 +23,7 @@ jobs:
         with:
           repository: MukuFlash03/${{ inputs.repo }}
           ref: ${{ inputs.branch }}
+          token: ${{ secrets.GH_FG_PAT_TAGS }}
 
       - name: Set docker image tags
         id: set-tags
@@ -89,7 +90,7 @@ jobs:
           else
             git add .env
             git commit -m "Updated docker image tags in .env file to the latest timestamp"
-            # git push https://${{ secrets.GH_FG_PAT_TAGS }}@github.com/MukuFlash03/${{ inputs.repo }}.git HEAD:${{ inputs.branch }}
-            git push origin cleanup-cicd
+            git push https://${{ secrets.GH_FG_PAT_TAGS }}@github.com/MukuFlash03/${{ inputs.repo }}.git HEAD:${{ inputs.branch }}
+            # git push origin cleanup-cicd
           fi
           cat .env
