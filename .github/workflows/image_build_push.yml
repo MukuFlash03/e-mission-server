@@ -97,10 +97,10 @@ jobs:
         include:
           - repo: nrel-openpath-join-page
             branch: cleanup-cicd
-          # - repo: op-admin-dashboard
-          #   branch: cleanup-cicd
-          # - repo: em-public-dashboard
-          #   branch: cleanup-cicd
+          - repo: op-admin-dashboard
+            branch: cleanup-cicd
+          - repo: em-public-dashboard
+            branch: cleanup-cicd
     uses: MukuFlash03/e-mission-server/.github/workflows/reusable_image_build_push.yml@cleanup-cicd
     with:
       repo: ${{ matrix.repo }}
