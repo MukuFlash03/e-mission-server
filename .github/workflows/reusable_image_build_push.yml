@@ -21,7 +21,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          repository: ${{ inputs.repo }}
+          repository: MukuFlash03/${{ inputs.repo }}
           ref: ${{ inputs.branch }}
 
       - name: Set docker image tags
