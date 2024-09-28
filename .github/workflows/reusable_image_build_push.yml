@@ -43,35 +43,37 @@ jobs:
         run: echo "date=$(date +'%Y-%m-%d--%M-%S')" >> "$GITHUB_OUTPUT"
 
       - name: Run a one-line script
-        run: echo running in repo ${GITHUB_REPOSITORY#*/} branch ${GITHUB_REF##*/} on ${{ steps.date.outputs.date }}
+        run: echo running image build for repo ${{ inputs.repo }} branch ${{ inputs.branch }} on ${{ steps.date.outputs.date }}
 
       - name: build docker image
         run: |
-          docker build -t $DOCKER_USER/${GITHUB_REPOSITORY#*/}:${GITHUB_REF##*/}_${{ steps.date.outputs.date }} ./frontend
+          if [ "${{ inputs.repo }}" = MukuFlash03/nrel-openpath-join-page" ]; then
+            docker build -t $DOCKER_USER/${{ inputs.repo }}:${{ inputs.branch }}_${{ steps.date.outputs.date }} ./frontend
+          fi
           docker images
   
       - name: push docker image
         run: |
-          docker push $DOCKER_USER/${GITHUB_REPOSITORY#*/}:${GITHUB_REF##*/}_${{ steps.date.outputs.date }}
+          docker push $DOCKER_USER/${{ inputs.repo }}:${{ inputs.branch }}_${{ steps.date.outputs.date }}
         
       - name: Update .env file 
         run: |
           if [ "${{ inputs.repo }}" = MukuFlash03/nrel-openpath-join-page" ]; then
-            echo "JOIN_IMAGE_TAG=${GITHUB_REF##*/}_${{ steps.date.outputs.date }}" > .env
+            echo "JOIN_IMAGE_TAG=${{ inputs.branch }}_${{ steps.date.outputs.date }}" > .env
           # elif [ "${{ inputs.repo }}" = "MukuFlash03/op-admin-dashboard" ]; then
           #   echo "SERVER_IMAGE_TAG=${{ steps.get-server-tag.outputs.SERVER_IMAGE_TAG }}" >> .env
-          #   echo "ADMIN_DASH_IMAGE_TAG=${GITHUB_REF##*/}_${{ steps.date.outputs.date }}" > .env
+          #   echo "ADMIN_DASH_IMAGE_TAG=${{ inputs.branch }}_${{ steps.date.outputs.date }}" > .env
           # elif [ "${{ inputs.repo }}" = "MukuFlash03/em-public-dashboard" ]; then
-          #   echo "PUBLIC_DASH_NOTEBOOK_IMAGE_TAG=${GITHUB_REF##*/}_${{ steps.date.outputs.date }}" > .env
+          #   echo "PUBLIC_DASH_NOTEBOOK_IMAGE_TAG=${{ inputs.branch }}_${{ steps.date.outputs.date }}" > .env
           #   if [ "${{ github.event_name }}" == "workflow_call" ]; then
           #     echo "Workflow_call: Reuse existing frontend image tag"
           #     echo "PUBLIC_DASH_FRONTEND_IMAGE_TAG=${{ steps.set-tags.outputs.PUBLIC_DASH_FRONTEND_IMAGE_TAG }}" >> .env
           #   else
           #     echo "Push event: Update frontend image tag"
-          #     echo "PUBLIC_DASH_FRONTEND_IMAGE_TAG=${GITHUB_REF##*/}_${{ steps.date.outputs.date }}" >> .env
+          #     echo "PUBLIC_DASH_FRONTEND_IMAGE_TAG=${{ inputs.branch }}_${{ steps.date.outputs.date }}" >> .env
           #   fi
           #   echo "SERVER_IMAGE_TAG=${{ steps.get-server-tag.outputs.SERVER_IMAGE_TAG }}" >> .env
-          #   echo "PUBLIC_DASHBOARD_IMAGE_TAG=${GITHUB_REF##*/}_${{ steps.date.outputs.date }}" > .env
+          #   echo "PUBLIC_DASHBOARD_IMAGE_TAG=${{ inputs.branch }}_${{ steps.date.outputs.date }}" > .env
           fi
           cat .env
 

@@ -91,6 +91,7 @@ jobs:
 
 
   cascade-image-build:
+    needs: build
     strategy:
       matrix:
         include:
