@@ -28,7 +28,8 @@ jobs:
         with:
           repository: MukuFlash03/${{ inputs.repo }}
           ref: ${{ inputs.branch }}
-          token: ${{ secrets.GH_FG_REUSE }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          # token: ${{ secrets.GH_FG_REUSE }}
           # token: ${{ secrets.GH_FG_PAT_TAGS }}
           # persist-credentials: false
     
