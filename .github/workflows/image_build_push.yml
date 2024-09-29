@@ -110,10 +110,16 @@ jobs:
   #   strategy:
   #     matrix:
   #       include:
-  #         - repo: e-mission/op-admin-dashboard
-  #           branch: master
-  #         - repo: e-mission/em-public-dashboard
-  #           branch: main
+  #         - repo: nrel-openpath-join-page
+  #           branch: cleanup-cicd
+  #         - repo: op-admin-dashboard
+  #           branch: cleanup-cicd
+  #         - repo: em-public-dashboard
+  #           branch: cleanup-cicd
+  #         # - repo: e-mission/op-admin-dashboard
+  #         #   branch: master
+  #         # - repo: e-mission/em-public-dashboard
+  #         #   branch: main
 
   #   steps:
   #   - uses: actions/checkout@v4
@@ -129,19 +135,19 @@ jobs:
   #         -d '{"ref":"${{ matrix.branch }}"}'
 
 
-  cascade-image-build:
-    needs: build
-    strategy:
-      matrix:
-        include:
-          - repo: nrel-openpath-join-page
-            branch: cleanup-cicd
-          - repo: op-admin-dashboard
-            branch: cleanup-cicd
-          - repo: em-public-dashboard
-            branch: cleanup-cicd
-    uses: MukuFlash03/e-mission-server/.github/workflows/reusable_image_build_push.yml@cleanup-cicd
-    with:
-      repo: ${{ matrix.repo }}
-      branch: ${{ matrix.branch }}
-    secrets: inherit
+  # cascade-image-build:
+  #   needs: build
+  #   strategy:
+  #     matrix:
+  #       include:
+  #         - repo: nrel-openpath-join-page
+  #           branch: cleanup-cicd
+  #         - repo: op-admin-dashboard
+  #           branch: cleanup-cicd
+  #         - repo: em-public-dashboard
+  #           branch: cleanup-cicd
+  #   uses: MukuFlash03/e-mission-server/.github/workflows/reusable_image_build_push.yml@cleanup-cicd
+  #   with:
+  #     repo: ${{ matrix.repo }}
+  #     branch: ${{ matrix.branch }}
+  #   secrets: inherit

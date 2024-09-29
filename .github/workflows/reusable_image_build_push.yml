@@ -121,7 +121,7 @@ jobs:
               echo "Push event: Update frontend image tag"
               echo "PUBLIC_DASH_FRONTEND_IMAGE_TAG=${{ inputs.branch }}_${{ steps.date.outputs.date }}" >> .env
             else
-              echo "Workflow_call: Reuse existing frontend image tag"
+              echo "Workflow_dispatch: Reuse existing frontend image tag"
               echo "PUBLIC_DASH_FRONTEND_IMAGE_TAG=${{ steps.set-tags.outputs.PUBLIC_DASH_FRONTEND_IMAGE_TAG }}" >> .env
             fi
             echo "SERVER_IMAGE_TAG=${{ steps.get-server-tag.outputs.SERVER_IMAGE_TAG }}" >> .env
