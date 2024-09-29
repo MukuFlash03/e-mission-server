@@ -136,9 +136,9 @@ jobs:
 
       - name: Add, Commit, Push changes to .env file
         run: |
+          git config --unset-all http.https://github.com/.extraheader
           git config --local user.email "action@github.com"
           git config --local user.name "Github Actions bot to update .env with latest tags"
-          git config --unset-all http.https://github.com/.extraheader
           echo ${{ github.actor }}
           if git diff --quiet; then
             echo "Latest timestamp already present in .env file, no changes to commit"
