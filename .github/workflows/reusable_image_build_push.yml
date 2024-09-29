@@ -26,7 +26,6 @@ jobs:
           # token: ${{ secrets.GITHUB_TOKEN }}
           # token: ${{ secrets.GH_FG_REUSE }}
           token: ${{ secrets.GH_FG_PAT_TAGS }}
-          # persist-credentials: false
     
       - name: Fetch server image tag
         id: get-server-tag
@@ -133,7 +132,7 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "Github Actions bot to update .env with latest tags"
-          echo ${{ github.actor }}
+          # echo ${{ github.actor }}
           if git diff --quiet; then
             echo "Latest timestamp already present in .env file, no changes to commit"
           else
