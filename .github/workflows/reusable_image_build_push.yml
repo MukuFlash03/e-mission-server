@@ -14,11 +14,6 @@ env:
   DOCKER_USER: ${{secrets.DOCKER_USER}}
   DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
 
-# permissions:
-#   contents: write
-
-permissions: write-all
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -28,9 +23,9 @@ jobs:
         with:
           repository: MukuFlash03/${{ inputs.repo }}
           ref: ${{ inputs.branch }}
-          token: ${{ secrets.GITHUB_TOKEN }}
+          # token: ${{ secrets.GITHUB_TOKEN }}
           # token: ${{ secrets.GH_FG_REUSE }}
-          # token: ${{ secrets.GH_FG_PAT_TAGS }}
+          token: ${{ secrets.GH_FG_PAT_TAGS }}
           # persist-credentials: false
     
       - name: Fetch server image tag
@@ -136,7 +131,6 @@ jobs:
 
       - name: Add, Commit, Push changes to .env file
         run: |
-          git config --unset-all http.https://github.com/.extraheader
           git config --local user.email "action@github.com"
           git config --local user.name "Github Actions bot to update .env with latest tags"
           echo ${{ github.actor }}
