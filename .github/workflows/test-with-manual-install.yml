@@ -31,8 +31,8 @@ jobs:
    
       - name: Success-Failure Test Case
         run: |
-          echo "Test successful" && exit 0
-          # echo "Test failed" && exit 1
+          # echo "Test successful" && exit 0
+          echo "Test failed" && exit 1
 
 # # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 # jobs:
