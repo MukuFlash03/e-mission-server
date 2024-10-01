@@ -68,12 +68,16 @@ jobs:
       branch_name: ${{ steps.get-branch-name.outputs.branch_name }}
 
     steps:
-      - name: Remove prefix from branch name
+      - name: Get branch name based on ref_type
         id: get-branch-name
         run: |
-          base_ref=${{ github.event.base_ref }}
-          echo "Branch name: branch_name=${base_ref#refs/heads/}"
-          echo "branch_name=${base_ref#refs/heads/}" >> "$GITHUB_OUTPUT"
+          if [ "${{ github.ref_type }}" == "tag" ]; then
+            base_ref=${{ github.event.base_ref }}
+            echo "Branch name: branch_name=${base_ref#refs/heads/}"
+            echo "branch_name=${base_ref#refs/heads/}" >> "$GITHUB_OUTPUT"
+          elif [ "${{ github.ref_type }}" == "branch" ]; then
+            echo "branch_name=:${GITHUB_REF##*/}" >> "$GITHUB_OUTPUT"    
+          fi
 
   build:
     runs-on: ubuntu-latest
