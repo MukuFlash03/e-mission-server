@@ -132,12 +132,13 @@ jobs:
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "Github Actions bot to update .env with latest tags"
+        git branch --show-current
         if git diff --quiet; then
           echo "Latest timestamp already present in .env file, no changes to commit"
         else
           git add .env
           git commit -m "Updated docker image tags in .env file to the latest timestamp"
-          git push origin 
+          git push origin HEAD:${BRANCH_NAME}
         fi
 
   dispatch:
