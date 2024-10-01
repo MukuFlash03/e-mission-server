@@ -89,6 +89,12 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    - name: Check BRANCH_NAME
+      run: |
+        echo Listing all environment variables...
+        printenv
+        echo Branch name env var = $BRANCH_NAME
+
     - name: Set docker image tags
       id: set-tags
       run: |
