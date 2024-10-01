@@ -3,6 +3,8 @@ name: docker image
 on:
   push:
     branches: [ master, gis-based-mode-detection, cleanup-cicd ]
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+"
 
 # Dockerhub credentials are set as environment variables
 env:
@@ -43,11 +45,15 @@ jobs:
     steps:
       - name: Print commit info
         run: |
-          echo "Commit author: ${{ github.event.commits[0].author.name }}"
           echo "Commit message: ${{ github.event.head_commit.message }}"
           echo "Head commit author: ${{ github.event.head_commit.author.name }}"
           echo "Event name: ${{ github.event_name }}"
           echo "Actor: ${{ github.actor }}"
+          echo "Ref: ${{ github.ref }}"
+          echo "Ref name: ${{ github.ref_name }}"
+          echo "Ref type: ${{ github.ref_type }}"
+          echo "Default branch: ${{ github.event.repository.default_branch }}"
+          echo "Github event base ref: ${{ github.event.base_ref }}"
 
   test-with-docker:
     uses: MukuFlash03/e-mission-server/.github/workflows/test-with-docker.yml@cleanup-cicd
@@ -58,6 +64,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     needs: [test-with-docker, test-with-manual-install]
+    if: github.ref_type == 'tag'
 
     outputs:
       date: ${{ steps.date.outputs.date }}
