@@ -112,21 +112,21 @@ jobs:
 
     #Runs a single command using the runners shell
     - name: Run a one-line script
-      run: echo running in repo ${GITHUB_REPOSITORY#*/} branch $BRANCH_NAME on ${{ steps.date.outputs.date }}
+      run: echo running in repo ${GITHUB_REPOSITORY#*/} branch ${BRANCH_NAME} on ${{ steps.date.outputs.date }}
 
     # Runs a set of commands using the runners shell
     - name: build docker image
       run: |
-        docker build -t $DOCKER_USER/${GITHUB_REPOSITORY#*/}:$BRANCH_NAME_${{ steps.date.outputs.date }} .
+        docker build -t $DOCKER_USER/${GITHUB_REPOSITORY#*/}:${BRANCH_NAME}_${{ steps.date.outputs.date }} .
         docker images
 
     - name: push docker image
       run: |
-        docker push $DOCKER_USER/${GITHUB_REPOSITORY#*/}:$BRANCH_NAME_${{ steps.date.outputs.date }}
+        docker push $DOCKER_USER/${GITHUB_REPOSITORY#*/}:${BRANCH_NAME}_${{ steps.date.outputs.date }}
 
     - name: Update .env file 
       run: |
-        echo "SERVER_IMAGE_TAG=$BRANCH_NAME_${{ steps.date.outputs.date }}" > .env
+        echo "SERVER_IMAGE_TAG=${BRANCH_NAME}_${{ steps.date.outputs.date }}" > .env
 
     - name: Add, Commit, Push changes to .env file
       run: |
