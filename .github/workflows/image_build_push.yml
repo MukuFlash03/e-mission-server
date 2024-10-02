@@ -6,7 +6,7 @@ on:
     tags:
       - "v[0-9]+.[0-9]+.[0-9]+"
 
-# Dockerhub credentials are set as environment variables
+#Dockerhub credentials are set as environment variables
 env:
   DOCKER_USER: ${{secrets.DOCKER_USER}}
   DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
@@ -80,70 +80,13 @@ jobs:
           fi
 
   build:
-    runs-on: ubuntu-latest
+    if: ${{ !contains(github.event.head_commit.author.name, 'Github Actions bot to update .env with latest tags') }}
     needs: [test-with-docker, test-with-manual-install, get-branch-name]
-    if: github.ref_type == 'tag'
-
-    outputs:
-      date: ${{ steps.date.outputs.date }}
-
-    env:
-      BRANCH_NAME: ${{ needs.get-branch-name.outputs.branch_name }}
-
-    steps:
-    - uses: actions/checkout@v2
-
-    - name: Check BRANCH_NAME
-      run: |
-        echo Listing all environment variables...
-        printenv
-        echo Branch name env var = $BRANCH_NAME
-
-    - name: Set docker image tags
-      id: set-tags
-      run: |
-        set -a; source .env; set +a
-        echo "SERVER_IMAGE_TAG=${SERVER_IMAGE_TAG}" >> "$GITHUB_OUTPUT"
-        echo "Current server image tag (push): ${SERVER_IMAGE_TAG}"
-  
-    - name: docker login
-      run: | # log into docker hub account
-        docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
-
-    - name: Get current date # get the date of the build
-      id: date
-      run: echo "date=$(date +'%Y-%m-%d--%M-%S')" >> "$GITHUB_OUTPUT"
-
-    #Runs a single command using the runners shell
-    - name: Run a one-line script
-      run: echo running in repo ${GITHUB_REPOSITORY#*/} branch ${BRANCH_NAME} on ${{ steps.date.outputs.date }}
-
-    # Runs a set of commands using the runners shell
-    - name: build docker image
-      run: |
-        docker build -t $DOCKER_USER/${GITHUB_REPOSITORY#*/}:${BRANCH_NAME}_${{ steps.date.outputs.date }} .
-        docker images
-
-    - name: push docker image
-      run: |
-        docker push $DOCKER_USER/${GITHUB_REPOSITORY#*/}:${BRANCH_NAME}_${{ steps.date.outputs.date }}
-
-    - name: Update .env file 
-      run: |
-        echo "SERVER_IMAGE_TAG=${BRANCH_NAME}_${{ steps.date.outputs.date }}" > .env
-
-    - name: Add, Commit, Push changes to .env file
-      run: |
-        git config --local user.email "action@github.com"
-        git config --local user.name "Github Actions bot to update .env with latest tags"
-        git branch --show-current
-        if git diff --quiet; then
-          echo "Latest timestamp already present in .env file, no changes to commit"
-        else
-          git add .env
-          git commit -m "Updated docker image tags in .env file to the latest timestamp"
-          git push origin HEAD:${BRANCH_NAME}
-        fi
+    uses: MukuFlash03/e-mission-server/.github/workflows/reusable_image_build_push.yml@cleanup-cicd
+    with:
+      repo: ${{ github.event.repository.name }}
+      branch: ${{ needs.get-branch-name.outputs.branch_name }}
+    secrets: inherit
 
   dispatch:
     needs: build
