@@ -19,11 +19,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Run test-with-manual-install for 1 minute
+      - name: Run test-with-manual-install for 15 seconds
         run: |
-          echo "Starting 1-minute workflow"
-          sleep 60
-          echo "1-minute workflow completed"
+          echo "Starting 15-second workflow"
+          sleep 15
+          echo "15-second workflow completed"
    
       - name: Success-Failure Test Case
         run: |

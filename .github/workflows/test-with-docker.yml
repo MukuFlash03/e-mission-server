@@ -17,11 +17,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Run test-with-docker for 30 seconds
+      - name: Run test-with-docker for 5 seconds
         run: |
-          echo "Starting 30-second workflow"
-          sleep 30
-          echo "30-second workflow completed"
+          echo "Starting 5-second workflow"
+          sleep 5
+          echo "5-second workflow completed"
 
       - name: Success-Failure Test Case
         run: |
