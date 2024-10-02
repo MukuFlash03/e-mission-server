@@ -115,7 +115,7 @@ jobs:
         run: |
           if [ "${{ inputs.repo }}" = "e-mission-server" ]; then
             echo "SERVER_IMAGE_TAG=${{ inputs.branch }}_${{ steps.date.outputs.date }}" > .env
-          if [ "${{ inputs.repo }}" = "nrel-openpath-join-page" ]; then
+          elif [ "${{ inputs.repo }}" = "nrel-openpath-join-page" ]; then
             echo "JOIN_IMAGE_TAG=${{ inputs.branch }}_${{ steps.date.outputs.date }}" > .env
           elif [ "${{ inputs.repo }}" = "op-admin-dashboard" ]; then
             echo "ADMIN_DASH_IMAGE_TAG=${{ inputs.branch }}_${{ steps.date.outputs.date }}" > .env
