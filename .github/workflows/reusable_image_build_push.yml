@@ -33,6 +33,36 @@ jobs:
           SERVER_IMAGE_TAG=$(echo "$response" | grep "SERVER_IMAGE_TAG=" | cut -d'=' -f2)
           echo "SERVER_IMAGE_TAG=$SERVER_IMAGE_TAG" >> "$GITHUB_OUTPUT"
 
+      - name: Fetch latest release tags for all repositories
+        id: fetch-latest-release-tags
+        run: |
+          repos=("e-mission-server" "nrel-openpath-join-page" "op-admin-dashboard" "em-public-dashboard")
+          for repo in "${repos[@]}"; do
+              response=$(curl -L -H "Accept: application/vnd.github+json" \
+                  -H "Authorization: Bearer ${{ secrets.GH_FG_PAT_TAGS }}" \
+                  -H "X-GitHub-Api-Version: 2022-11-28" \
+                  "https://api.github.com/repos/MukuFlash03/$repo/releases/latest")
+
+              # Extract values using jq
+              tag_name=$(echo "$response" | jq -r '.tag_name')
+              target_commitish=$(echo "$response" | jq -r '.target_commitish')
+
+              # Output the values
+              echo "${repo}_tag_name=${tag_name}" >> "$GITHUB_OUTPUT"
+              echo "${repo}_target_commitish=${target_commitish}" >> "$GITHUB_OUTPUT"
+          done
+
+      - name: Print fetched tags
+        run: |
+          echo "e-mission-server_tag_name=${e-mission-server_tag_name}"
+          echo "e-mission-server_target_commitish=${e-mission-server_target_commitish}"
+          echo "nrel-openpath-join-page_tag_name=${nrel-openpath-join-page_tag_name}"
+          echo "nrel-openpath-join-page_target_commitish=${nrel-openpath-join-page_target_commitish}"
+          echo "op-admin-dashboard_tag_name=${op-admin-dashboard_tag_name}"
+          echo "op-admin-dashboard_target_commitish=${op-admin-dashboard_target_commitish}"
+          echo "em-public-dashboard_tag_name=${em-public-dashboard_tag_name}"
+          echo "em-public-dashboard_target_commitish=${em-public-dashboard_target_commitish}"
+
       - name: Set docker image tags
         id: set-tags
         run: |
