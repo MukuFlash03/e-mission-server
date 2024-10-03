@@ -51,7 +51,7 @@ jobs:
           echo "join_page_tag_name=${join_page_tag_name}"
           echo "join_page_target_commitish=${join_page_target_commitish}"
 
-          : <<'MAP_REPOS'
+          # : <<'MAP_REPOS'
           declare -A REPOS
           REPOS["server"]="e-mission-server"
           REPOS["join_page"]="nrel-openpath-join-page"
@@ -60,6 +60,8 @@ jobs:
 
           for var_name in "${!repos_map[@]}"; do
             repo_name="${repos_map[$var_name]}"
+
+            echo "Fetching latest release tags key = ${var_name} ; value = ${repo_name}"
 
             response=$(curl -L -H "Accept: application/vnd.github+json" \
                 -H "Authorization: Bearer ${{ secrets.GH_FG_PAT_TAGS }}" \
@@ -72,25 +74,19 @@ jobs:
             echo "${var_name}_tag_name=${tag_name}" >> "$GITHUB_OUTPUT"
             echo "${var_name}_target_commitish=${target_commitish}" >> "$GITHUB_OUTPUT"
           done
-
-          echo "Printing fetched tags:"
-          for var_name in "${!repos_map[@]}"; do
-            echo "${var_name}_tag_name=${!var_name_tag_name}"
-            echo "${var_name}_target_commitish=${!var_name_target_commitish}"
-          done
-          MAP_REPOS
+          # MAP_REPOS
 
       - name: Print fetched tags
         run: |
           echo "Printing fetched tags outputs:"
           echo "Current join image tag: ${{ steps.fetch-latest-release-tags.outputs.join_page_tag_name }} ; target_commit: ${{ steps.fetch-latest-release-tags.outputs.join_page_target_commitish }}"
 
-          : <<'PRINT_TAGS'
+          # : <<'PRINT_TAGS'
           echo "Current server image tag: ${{ steps.fetch-latest-release-tags.outputs.server_tag_name }} ; target_commit: ${{ steps.fetch-latest-release-tags.outputs.server_target_commitish }}"
           echo "Current join-page image tag: ${{ steps.fetch-latest-release-tags.outputs.join_page_tag_name }} ; target_commit: ${{ steps.fetch-latest-release-tags.outputs.join_page_target_commitish }}"
           echo "Current admin-dash image tag: ${{ steps.fetch-latest-release-tags.outputs.admin_dash_tag_name }} ; target_commit: ${{ steps.fetch-latest-release-tags.outputs.admin_dash_target_commitish }}"
           echo "Current public-dash image tag: ${{ steps.fetch-latest-release-tags.outputs.public_dash_tag_name }} ; target_commit: ${{ steps.fetch-latest-release-tags.outputs.public_dash_target_commitish }}"
-          PRINT_TAGS
+          # PRINT_TAGS
 
       - name: Set docker image tags
         id: set-tags
