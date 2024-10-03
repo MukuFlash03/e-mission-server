@@ -52,16 +52,14 @@ jobs:
           echo "join_page_target_commitish=${join_page_target_commitish}"
 
           # : <<'MAP_REPOS'
-          declare -A REPOS
-          REPOS["server"]="e-mission-server"
-          REPOS["join_page"]="nrel-openpath-join-page"
-          REPOS["admin_dash"]="op-admin-dashboard"
-          REPOS["public_dash"]="em-public-dashboard"
+          declare -A repos_map
+          repos_map["server"]="e-mission-server"
+          repos_map["join_page"]="nrel-openpath-join-page"
+          repos_map["admin_dash"]="op-admin-dashboard"
+          repos_map["public_dash"]="em-public-dashboard"
 
           for var_name in "${!repos_map[@]}"; do
             repo_name="${repos_map[$var_name]}"
-
-            echo "Fetching latest release tags key = ${var_name} ; value = ${repo_name}"
 
             response=$(curl -L -H "Accept: application/vnd.github+json" \
                 -H "Authorization: Bearer ${{ secrets.GH_FG_PAT_TAGS }}" \
