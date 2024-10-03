@@ -44,8 +44,8 @@ jobs:
           join_page_tag_name=$(echo "$response" | jq -r '.tag_name')
           join_page_target_commitish=$(echo "$response" | jq -r '.target_commitish')
 
-          echo "$join_page_tag_name=${join_page_tag_name}" >> "$GITHUB_OUTPUT"
-          echo "$join_page_target_commitish=${join_page_target_commitish}" >> "$GITHUB_OUTPUT"
+          echo "join_page_tag_name=${join_page_tag_name}" >> "$GITHUB_OUTPUT"
+          echo "join_page_target_commitish=${join_page_target_commitish}" >> "$GITHUB_OUTPUT"
 
           echo "Printing fetched tags:"
           echo "join_page_tag_name=${join_page_tag_name}"
@@ -84,7 +84,7 @@ jobs:
         run: |
           echo "Printing fetched tags outputs:"
           echo "Current join image tag: ${{ steps.fetch-latest-release-tags.outputs.join_page_tag_name }} ; target_commit: ${{ steps.fetch-latest-release-tags.outputs.join_page_target_commitish }}"
-          
+
           : <<'PRINT_TAGS'
           echo "Current server image tag: ${{ steps.fetch-latest-release-tags.outputs.server_tag_name }} ; target_commit: ${{ steps.fetch-latest-release-tags.outputs.server_target_commitish }}"
           echo "Current join-page image tag: ${{ steps.fetch-latest-release-tags.outputs.join_page_tag_name }} ; target_commit: ${{ steps.fetch-latest-release-tags.outputs.join_page_target_commitish }}"
