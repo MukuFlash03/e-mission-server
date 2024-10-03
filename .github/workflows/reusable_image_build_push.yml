@@ -36,32 +36,40 @@ jobs:
       - name: Fetch latest release tags for all repositories
         id: fetch-latest-release-tags
         run: |
-          repos=("e-mission-server" "nrel-openpath-join-page" "op-admin-dashboard" "em-public-dashboard")
-          for repo in "${repos[@]}"; do
-              response=$(curl -L -H "Accept: application/vnd.github+json" \
-                  -H "Authorization: Bearer ${{ secrets.GH_FG_PAT_TAGS }}" \
-                  -H "X-GitHub-Api-Version: 2022-11-28" \
-                  "https://api.github.com/repos/MukuFlash03/$repo/releases/latest")
+          declare -A REPOS
+          REPOS["server"]="e-mission-server"
+          REPOS["join_page"]="nrel-openpath-join-page"
+          REPOS["admin_dash"]="op-admin-dashboard"
+          REPOS["public_dash"]="em-public-dashboard"
 
-              # Extract values using jq
-              tag_name=$(echo "$response" | jq -r '.tag_name')
-              target_commitish=$(echo "$response" | jq -r '.target_commitish')
+          for var_name in "${!repos_map[@]}"; do
+            repo_name="${repos_map[$var_name]}"
 
-              # Output the values
-              echo "${repo}_tag_name=${tag_name}" >> "$GITHUB_OUTPUT"
-              echo "${repo}_target_commitish=${target_commitish}" >> "$GITHUB_OUTPUT"
+            response=$(curl -L -H "Accept: application/vnd.github+json" \
+                -H "Authorization: Bearer ${{ secrets.GH_FG_PAT_TAGS }}" \
+                -H "X-GitHub-Api-Version: 2022-11-28" \
+                "https://api.github.com/repos/MukuFlash03/$repo_name/releases/latest")
+
+            tag_name=$(echo "$response" | jq -r '.tag_name')
+            target_commitish=$(echo "$response" | jq -r '.target_commitish')
+
+            echo "${var_name}_tag_name=${tag_name}" >> "$GITHUB_OUTPUT"
+            echo "${var_name}_target_commitish=${target_commitish}" >> "$GITHUB_OUTPUT"
+          done
+
+          echo "Printing fetched tags:"
+          for var_name in "${!repos_map[@]}"; do
+            echo "${var_name}_tag_name=${!var_name_tag_name}"
+            echo "${var_name}_target_commitish=${!var_name_target_commitish}"
           done
 
       - name: Print fetched tags
         run: |
-          echo "e-mission-server_tag_name=${e-mission-server_tag_name}"
-          echo "e-mission-server_target_commitish=${e-mission-server_target_commitish}"
-          echo "nrel-openpath-join-page_tag_name=${nrel-openpath-join-page_tag_name}"
-          echo "nrel-openpath-join-page_target_commitish=${nrel-openpath-join-page_target_commitish}"
-          echo "op-admin-dashboard_tag_name=${op-admin-dashboard_tag_name}"
-          echo "op-admin-dashboard_target_commitish=${op-admin-dashboard_target_commitish}"
-          echo "em-public-dashboard_tag_name=${em-public-dashboard_tag_name}"
-          echo "em-public-dashboard_target_commitish=${em-public-dashboard_target_commitish}"
+          echo "Printing fetched tags:"
+          echo "Current server image tag: ${{ steps.fetch-latest-release-tags.outputs.server_tag_name }} ; target_commit: ${{ steps.fetch-latest-release-tags.outputs.server_target_commitish }}"
+          echo "Current join-page image tag: ${{ steps.fetch-latest-release-tags.outputs.join_page_tag_name }} ; target_commit: ${{ steps.fetch-latest-release-tags.outputs.join_page_target_commitish }}"
+          echo "Current admin-dash image tag: ${{ steps.fetch-latest-release-tags.outputs.admin_dash_tag_name }} ; target_commit: ${{ steps.fetch-latest-release-tags.outputs.admin_dash_target_commitish }}"
+          echo "Current public-dash image tag: ${{ steps.fetch-latest-release-tags.outputs.public_dash_tag_name }} ; target_commit: ${{ steps.fetch-latest-release-tags.outputs.public_dash_target_commitish }}"
 
       - name: Set docker image tags
         id: set-tags
