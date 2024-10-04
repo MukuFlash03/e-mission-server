@@ -36,55 +36,39 @@ jobs:
       - name: Fetch latest release tags for all repositories
         id: fetch-latest-release-tags
         run: |
+          full_repo=${{ inputs.repo }}
+          repo_name="${full_repo#*/}"
+          echo 1: $repo_name
+
+          repo_name="${{ inputs.repo }}#*/"
+          echo 2: $repo_name
+
+          repo_name="${inputs.repo#*/}"
+          echo 3: $repo_name
+
+          var_name="${repo_name//-/_}"
+          echo $full_repo : $repo_name : $var_name
+
           response=$(curl -L -H "Accept: application/vnd.github+json" \
-                -H "Authorization: Bearer ${{ secrets.GH_FG_PAT_TAGS }}" \
-                -H "X-GitHub-Api-Version: 2022-11-28" \
-                "https://api.github.com/repos/MukuFlash03/nrel-openpath-join-page/releases/latest")
+              -H "Authorization: Bearer ${{ secrets.GH_FG_PAT_TAGS }}" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              "https://api.github.com/repos/MukuFlash03/$repo_name/releases/latest")
 
-          join_page_tag_name=$(echo "$response" | jq -r '.tag_name')
-          join_page_target_commitish=$(echo "$response" | jq -r '.target_commitish')
+          tag_name=$(echo "$response" | jq -r '.tag_name')
+          target_commitish=$(echo "$response" | jq -r '.target_commitish')
 
-          echo "join_page_tag_name=${join_page_tag_name}" >> "$GITHUB_OUTPUT"
-          echo "join_page_target_commitish=${join_page_target_commitish}" >> "$GITHUB_OUTPUT"
-
-          echo "Printing fetched tags:"
-          echo "join_page_tag_name=${join_page_tag_name}"
-          echo "join_page_target_commitish=${join_page_target_commitish}"
-
-          # : <<'MAP_REPOS'
-          declare -A repos_map
-          repos_map["server"]="e-mission-server"
-          repos_map["join_page"]="nrel-openpath-join-page"
-          repos_map["admin_dash"]="op-admin-dashboard"
-          repos_map["public_dash"]="em-public-dashboard"
-
-          for var_name in "${!repos_map[@]}"; do
-            repo_name="${repos_map[$var_name]}"
-
-            response=$(curl -L -H "Accept: application/vnd.github+json" \
-                -H "Authorization: Bearer ${{ secrets.GH_FG_PAT_TAGS }}" \
-                -H "X-GitHub-Api-Version: 2022-11-28" \
-                "https://api.github.com/repos/MukuFlash03/$repo_name/releases/latest")
-
-            tag_name=$(echo "$response" | jq -r '.tag_name')
-            target_commitish=$(echo "$response" | jq -r '.target_commitish')
-
+          echo "${var_name}_tag_name=${tag_name}"
+          echo "${var_name}_target_commitish=${target_commitish}"
             echo "${var_name}_tag_name=${tag_name}" >> "$GITHUB_OUTPUT"
             echo "${var_name}_target_commitish=${target_commitish}" >> "$GITHUB_OUTPUT"
           done
-          # MAP_REPOS
 
       - name: Print fetched tags
         run: |
-          echo "Printing fetched tags outputs:"
-          echo "Current join image tag: ${{ steps.fetch-latest-release-tags.outputs.join_page_tag_name }} ; target_commit: ${{ steps.fetch-latest-release-tags.outputs.join_page_target_commitish }}"
-
-          # : <<'PRINT_TAGS'
           echo "Current server image tag: ${{ steps.fetch-latest-release-tags.outputs.server_tag_name }} ; target_commit: ${{ steps.fetch-latest-release-tags.outputs.server_target_commitish }}"
           echo "Current join-page image tag: ${{ steps.fetch-latest-release-tags.outputs.join_page_tag_name }} ; target_commit: ${{ steps.fetch-latest-release-tags.outputs.join_page_target_commitish }}"
           echo "Current admin-dash image tag: ${{ steps.fetch-latest-release-tags.outputs.admin_dash_tag_name }} ; target_commit: ${{ steps.fetch-latest-release-tags.outputs.admin_dash_target_commitish }}"
           echo "Current public-dash image tag: ${{ steps.fetch-latest-release-tags.outputs.public_dash_tag_name }} ; target_commit: ${{ steps.fetch-latest-release-tags.outputs.public_dash_target_commitish }}"
-          # PRINT_TAGS
 
       - name: Set docker image tags
         id: set-tags
@@ -118,9 +102,32 @@ jobs:
             echo "Latest server image tag (${{ github.event_name }}): ${{ steps.get-server-tag.outputs.SERVER_IMAGE_TAG }}"
           fi
 
-      - name: docker login
-        run: |
-          docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # - name: docker login
+      #   run: |
+      #     docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+
+      - name: Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          # images: |
+          #   name/app
+          tags: |
+            type=ref,event=branch
+            type=ref,event=tag
+            type=semver,pattern={{version}}
+            type=semver,pattern={{version}},value=${repos_map[${repo_name}]}
+            type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', inputs.branch ) }} 
+
+      - name: Login to DockerHub
+        # if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          username: $DOCKER_USER
+          password: $DOCKER_PASSWORD
 
       - name: Get current date # get the date of the build
         id: date
