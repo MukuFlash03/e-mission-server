@@ -99,9 +99,9 @@ jobs:
           tags: |
             # type=ref,event=branch
             # type=ref,event=tag
-            type=semver,pattern=v{{version}}
+            # type=semver,pattern=v{{version}}
             # type=semver,pattern=v{{version}},value=${{ steps.fetch-latest-release-tags.outputs.tag_name }}
-            type=semver,pattern=v{{version}},value=v4.2.6
+            # type=semver,pattern=v{{version}},value=v4.2.6
             # type=raw,value=latest,enable=${{ github.ref == format('refs/tags/{0}', steps.fetch-latest-release-tags.outputs.tag_name ) }} 
 
       - name: Login to DockerHub
