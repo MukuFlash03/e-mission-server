@@ -98,11 +98,16 @@ jobs:
           #   name/app
           tags: |
             # type=ref,event=branch
-            # type=ref,event=tag
-            # type=semver,pattern=v{{version}}
-            # type=semver,pattern=v{{version}},value=${{ steps.fetch-latest-release-tags.outputs.tag_name }}
-            # type=semver,pattern=v{{version}},value=v4.2.6
-            # type=raw,value=latest,enable=${{ github.ref == format('refs/tags/{0}', steps.fetch-latest-release-tags.outputs.tag_name ) }} 
+            type=ref,event=tag
+            type=semver,pattern=v{{version}}
+            type=semver,pattern=v{{version}},value=${{ steps.fetch-latest-release-tags.outputs.tag_name }}
+
+      - name: Print docker metadata tags and label
+        run: |
+          echo Tags
+          echo ${{ steps.meta.outputs.tags }}
+          echo Labels
+          echo ${{ steps.meta.outputs.labels }}    
 
       - name: Login to DockerHub
         # if: github.event_name != 'pull_request'
@@ -111,12 +116,12 @@ jobs:
           username: ${{ env.DOCKER_USER }}
           password: ${{ env.DOCKER_PASSWORD }}
 
-      # - name: Get current date # get the date of the build
-      #   id: date
-      #   run: echo "date=$(date +'%Y-%m-%d--%M-%S')" >> "$GITHUB_OUTPUT"
+      - name: Get current date # get the date of the build
+        id: date
+        run: echo "date=$(date +'%Y-%m-%d--%M-%S')" >> "$GITHUB_OUTPUT"
 
-      # - name: Run a one-line script
-      #   run: echo running image build for repo ${{ inputs.repo }} branch ${{ inputs.branch }} on ${{ steps.date.outputs.date }}
+      - name: Run a one-line script
+        run: echo running image build for repo ${{ inputs.repo }} branch ${{ inputs.branch }} on ${{ steps.date.outputs.date }}
 
       # - name: build docker image
       #   run: |
