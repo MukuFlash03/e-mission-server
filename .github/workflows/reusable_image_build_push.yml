@@ -101,7 +101,7 @@ jobs:
             # type=ref,event=tag
             type=semver,pattern=v{{version}}
             # type=semver,pattern=v{{version}},value=${{ steps.fetch-latest-release-tags.outputs.tag_name }}
-            type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', inputs.branch ) }} 
+            # type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', inputs.branch ) }} 
 
       - name: Login to DockerHub
         # if: github.event_name != 'pull_request'
