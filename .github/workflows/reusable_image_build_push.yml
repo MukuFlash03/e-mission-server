@@ -36,18 +36,7 @@ jobs:
       - name: Fetch latest release tags for all repositories
         id: fetch-latest-release-tags
         run: |
-          full_repo=${{ inputs.repo }}
-          repo_name="${full_repo#*/}"
-          echo 1: $repo_name
-
-          repo_name="${{ inputs.repo }}#*/"
-          echo 2: $repo_name
-
-          repo_name="${inputs.repo#*/}"
-          echo 3: $repo_name
-
-          var_name="${repo_name//-/_}"
-          echo $full_repo : $repo_name : $var_name
+          repo_name=${{ inputs.repo }}
 
           response=$(curl -L -H "Accept: application/vnd.github+json" \
               -H "Authorization: Bearer ${{ secrets.GH_FG_PAT_TAGS }}" \
@@ -56,19 +45,14 @@ jobs:
 
           tag_name=$(echo "$response" | jq -r '.tag_name')
           target_commitish=$(echo "$response" | jq -r '.target_commitish')
-
-          echo "${var_name}_tag_name=${tag_name}"
-          echo "${var_name}_target_commitish=${target_commitish}"
-            echo "${var_name}_tag_name=${tag_name}" >> "$GITHUB_OUTPUT"
-            echo "${var_name}_target_commitish=${target_commitish}" >> "$GITHUB_OUTPUT"
+          
+          echo "tag_name=${tag_name}" >> "$GITHUB_OUTPUT"
+          echo "target_commitish=${target_commitish}" >> "$GITHUB_OUTPUT"
           done
 
       - name: Print fetched tags
         run: |
-          echo "Current server image tag: ${{ steps.fetch-latest-release-tags.outputs.server_tag_name }} ; target_commit: ${{ steps.fetch-latest-release-tags.outputs.server_target_commitish }}"
-          echo "Current join-page image tag: ${{ steps.fetch-latest-release-tags.outputs.join_page_tag_name }} ; target_commit: ${{ steps.fetch-latest-release-tags.outputs.join_page_target_commitish }}"
-          echo "Current admin-dash image tag: ${{ steps.fetch-latest-release-tags.outputs.admin_dash_tag_name }} ; target_commit: ${{ steps.fetch-latest-release-tags.outputs.admin_dash_target_commitish }}"
-          echo "Current public-dash image tag: ${{ steps.fetch-latest-release-tags.outputs.public_dash_tag_name }} ; target_commit: ${{ steps.fetch-latest-release-tags.outputs.public_dash_target_commitish }}"
+          echo "Current image tag: ${{ steps.fetch-latest-release-tags.outputs.tag_name }} ; target_commit: ${{ steps.fetch-latest-release-tags.outputs.target_commitish }}"
 
       - name: Set docker image tags
         id: set-tags
@@ -119,7 +103,7 @@ jobs:
             type=ref,event=branch
             type=ref,event=tag
             type=semver,pattern={{version}}
-            type=semver,pattern={{version}},value=${repos_map[${repo_name}]}
+            type=semver,pattern={{version}},value=${{ steps.fetch-latest-release-tags.outputs.tag_name }}
             type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', inputs.branch ) }} 
 
       - name: Login to DockerHub
