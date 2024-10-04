@@ -83,12 +83,12 @@ jobs:
             echo "Latest server image tag (${{ github.event_name }}): ${{ steps.get-server-tag.outputs.SERVER_IMAGE_TAG }}"
           fi
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+      # - name: Set up Docker Buildx
+      #   uses: docker/setup-buildx-action@v3
 
-      # - name: docker login
-      #   run: |
-      #     docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+      - name: docker login
+        run: |
+          docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
 
       # - name: Login to DockerHub
       #   # if: github.event_name != 'pull_request'
