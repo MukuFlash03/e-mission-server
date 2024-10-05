@@ -66,8 +66,6 @@ jobs:
         if: ${{ inputs.repo == 'op-admin-dashboard' || inputs.repo == 'em-public-dashboard' || inputs.repo == 'nrel-openpath-join-page'}} 
         id: increment-release-tag
         run: |
-          # previous_tag=$(git describe --tags --abbrev=0 HEAD^)
-
           previous_server_tag=${{ steps.get-server-tag.outputs.SERVER_IMAGE_TAG }}
           current_server_tag=${GITHUB_REF##*/}
           echo "Previous server tag: $previous_server_tag"
@@ -77,7 +75,7 @@ jobs:
           current_server_tag_only=${current_server_tag:1}
 
           echo "Previous tag no v: $previous_server_tag_only"
-          echo "Current tag no v: $currencurrent_server_tag_onlyt_tag_no_v"
+          echo "Current tag no v: $current_server_tag_only"
 
           IFS='.' read -r -a previous <<< "${previous_server_tag_only:1}"
           IFS='.' read -r -a current <<< "${current_server_tag_only:1}"
