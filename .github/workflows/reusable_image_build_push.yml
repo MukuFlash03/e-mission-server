@@ -53,32 +53,40 @@ jobs:
           response=$(curl -L -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer ${{ secrets.GH_FG_PAT_TAGS }}" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
-            "https://api.github.com/repos/MukuFlash03/e-mission-server/releases/latest")
+            "https://api.github.com/repos/MukuFlash03/e-mission-server/git/refs/tags")
+          # "https://api.github.com/repos/MukuFlash03/e-mission-server/releases/latest")
 
-          SERVER_IMAGE_TAG=$(echo "$response" | jq -r '.tag_name')
-          SERVER_IMAGE_TARGET=$(echo "$response" | jq -r '.target_commitish')
+          # SERVER_IMAGE_TAG=$(echo "$response" | jq -r '.tag_name')
+          # SERVER_IMAGE_TARGET=$(echo "$response" | jq -r '.target_commitish')
           
-          echo "SERVER_IMAGE_TAG=$(echo "$response" | jq -r '.tag_name')" >> "$GITHUB_OUTPUT"
-          echo "SERVER_IMAGE_TARGET=$(echo "$response" | jq -r '.target_commitish')" >> "$GITHUB_OUTPUT"
+          # echo "SERVER_IMAGE_TAG=$(echo "$response" | jq -r '.tag_name')" >> "$GITHUB_OUTPUT"
+          # echo "SERVER_IMAGE_TARGET=$(echo "$response" | jq -r '.target_commitish')" >> "$GITHUB_OUTPUT"
+
+          tags=$(echo "$response" | jq -r '.[].ref' | cut -d'/' -f3)
+          latest_tag=$(echo "$tags" | sort -V | tail -n 1)
+          previous_tag=$(echo "$tags" | sort -V | tail -n 2 | head -n 1)
+
+          echo "LATEST_SERVER_TAG=$latest_tag" >> "$GITHUB_OUTPUT"
+          echo "PREVIOUS_SERVER_TAG=$previous_tag" >> "$GITHUB_OUTPUT"
 
       - name: Bump up release tag
         # if: ${{ inputs.repo == 'op-admin-dashboard' || inputs.repo == 'em-public-dashboard' }}
         if: ${{ inputs.repo == 'op-admin-dashboard' || inputs.repo == 'em-public-dashboard' || inputs.repo == 'nrel-openpath-join-page'}} 
         id: increment-release-tag
         run: |
-          previous_server_tag=${{ steps.get-server-tag.outputs.SERVER_IMAGE_TAG }}
-          current_server_tag=${GITHUB_REF##*/}
-          echo "Previous server tag: $previous_server_tag"
+          current_server_tag=${{ steps.get-server-tag.outputs.LATEST_SERVER_TAG }}
+          previous_server_tag=${{ steps.get-server-tag.outputs.PREVIOUS_SERVER_TAG }}
           echo "Current server tag: $current_server_tag"
+          echo "Previous server tag: $previous_server_tag"
 
-          previous_server_tag_only=${previous_server_tag:1}
           current_server_tag_only=${current_server_tag:1}
+          previous_server_tag_only=${previous_server_tag:1}
 
-          echo "Previous tag no v: $previous_server_tag_only"
           echo "Current tag no v: $current_server_tag_only"
+          echo "Previous tag no v: $previous_server_tag_only"
 
-          IFS='.' read -r -a previous <<< "${previous_server_tag_only:1}"
           IFS='.' read -r -a current <<< "${current_server_tag_only:1}"
+          IFS='.' read -r -a previous <<< "${previous_server_tag_only:1}"
 
           if [ "${current[0]}" -gt "${previous[0]}" ]; then
             version_change=major
