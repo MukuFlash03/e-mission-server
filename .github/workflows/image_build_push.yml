@@ -86,10 +86,10 @@ jobs:
     with:
       repo: ${{ github.event.repository.name }}
       branch: ${{ needs.get-branch-name.outputs.branch_name }}
-    secrets: inherit
+    secrets: inherit  
 
   dispatch:
-    needs: build
+    needs: [build]
     runs-on: ubuntu-latest
 
     strategy:
