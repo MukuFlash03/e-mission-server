@@ -85,15 +85,20 @@ jobs:
           echo "Current tag no v: $current_server_tag_only"
           echo "Previous tag no v: $previous_server_tag_only"
 
-          IFS='.' read -r -a current <<< "${current_server_tag_only:1}"
-          IFS='.' read -r -a previous <<< "${previous_server_tag_only:1}"
+          IFS='.' read -r -a current <<< "${current_server_tag_only}"
+          IFS='.' read -r -a previous <<< "${previous_server_tag_only}"
 
-          if [ "${current[0]}" -gt "${previous[0]}" ]; then
-            version_change=major
-          elif [ "${current[0]}" -eq "${previous[0]}" ] && [ "${current[1]}" -gt "${previous[1]}" ]; then
-            version_change=minor
-          elif [ "${current[0]}" -eq "${previous[0]}" ] && [ "${current[1]}" -eq "${previous[1]}" ] && [ "${current[2]}" -gt "${previous[2]}" ]; then
-            version_change=patch
+          if [[ ${#current[@]} -eq 3 && ${#previous[@]} -eq 3 ]]; then
+            if [ "${current[0]}" -gt "${previous[0]}" ]; then
+              version_change=major
+            elif [ "${current[0]}" -eq "${previous[0]}" ] && [ "${current[1]}" -gt "${previous[1]}" ]; then
+              version_change=minor
+            elif [ "${current[0]}" -eq "${previous[0]}" ] && [ "${current[1]}" -eq "${previous[1]}" ] && [ "${current[2]}" -gt "${previous[2]}" ]; then
+              version_change=patch
+            fi
+          else
+            echo "Version format error"
+            exit 1
           fi
 
           echo "name=version_change::$version_change"
