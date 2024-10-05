@@ -106,7 +106,7 @@ jobs:
           current_repo_version=${{ steps.fetch-latest-release-tags.outputs.tag_name }}
           current_repo_version_only=${current_repo_version:1}
 
-          IFS='.' read -r -a version_parts <<< "$current_vcurrent_repo_version_onlyersion_no_v"
+          IFS='.' read -r -a version_parts <<< "$current_repo_version_only"
 
           case "$version_change" in
             major)
