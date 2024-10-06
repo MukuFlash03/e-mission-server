@@ -79,17 +79,14 @@ jobs:
           echo "Current server tag: $current_server_tag"
           echo "Previous server tag: $previous_server_tag"
 
-          # current_server_tag_only=${current_server_tag:1}
-          # previous_server_tag_only=${previous_server_tag:1}
+          current_server_tag_only=${current_server_tag:1}
+          previous_server_tag_only=${previous_server_tag:1}
 
-          # echo "Current tag no v: $current_server_tag_only"
-          # echo "Previous tag no v: $previous_server_tag_only"
+          echo "Current tag no v: $current_server_tag_only"
+          echo "Previous tag no v: $previous_server_tag_only"
 
-          # IFS='.' read -r -a current <<< "${current_server_tag_only}"
-          # IFS='.' read -r -a previous <<< "${previous_server_tag_only}"
-          
-          IFS='.' read -r -a current <<< "${current_server_tag:1}"
-          IFS='.' read -r -a previous <<< "${current_server_tag:1}"
+          IFS='.' read -r -a current <<< "${current_server_tag_only}"
+          IFS='.' read -r -a previous <<< "${previous_server_tag_only}"
 
           if [[ ${#current[@]} -eq 3 && ${#previous[@]} -eq 3 ]]; then
             if [ "${current[0]}" -gt "${previous[0]}" ]; then
@@ -107,11 +104,9 @@ jobs:
           echo "name=version_change::$version_change"
 
           current_repo_version=${{ steps.fetch-latest-release-tags.outputs.tag_name }}
-          # current_repo_version_only=${current_repo_version:1}
+          current_repo_version_only=${current_repo_version:1}
 
-          # IFS='.' read -r -a version_parts <<< "${current_repo_version_only}"
-          
-          IFS='.' read -r -a version_parts <<< "${current_repo_version:1}"
+          IFS='.' read -r -a version_parts <<< "${current_repo_version_only}"
 
           case "$version_change" in
             major)
