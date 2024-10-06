@@ -196,6 +196,7 @@ jobs:
               docker build -t $DOCKER_USER/${{ inputs.repo }}:${{ steps.fetch-latest-release-tags.outputs.tag_name }} ./frontend
             elif [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
               docker build -t $DOCKER_USER/${{ inputs.repo }}:${{ steps.increment-release-tag.outputs.new_repo_version }} ./frontend
+            fi
           elif [ "${{ inputs.repo }}" = "op-admin-dashboard" ]; then
             SERVER_IMAGE_TAG=${{ steps.get-server-tag.outputs.SERVER_IMAGE_TAG }} docker compose -f docker-compose-prod.yml build
           elif [ "${{ inputs.repo }}" = "em-public-dashboard" ]; then            
