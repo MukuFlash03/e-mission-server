@@ -66,7 +66,7 @@ jobs:
           latest_tag=$(echo "$tags" | sort -V | tail -n 1)
           previous_tag=$(echo "$tags" | sort -V | tail -n 2 | head -n 1)
 
-          echo "LATEST_SERVER_TAG=$latest_tag" >> "$GITHUB_OUTPUT"
+          echo "SERVER_IMAGE_TAG=$latest_tag" >> "$GITHUB_OUTPUT"
           echo "PREVIOUS_SERVER_TAG=$previous_tag" >> "$GITHUB_OUTPUT"
 
       - name: Bump up release tag
@@ -74,7 +74,7 @@ jobs:
         if: ${{ inputs.repo == 'op-admin-dashboard' || inputs.repo == 'em-public-dashboard' || inputs.repo == 'nrel-openpath-join-page'}} 
         id: increment-release-tag
         run: |
-          current_server_tag=${{ steps.get-server-tag.outputs.LATEST_SERVER_TAG }}
+          current_server_tag=${{ steps.get-server-tag.outputs.SERVER_IMAGE_TAG }}
           previous_server_tag=${{ steps.get-server-tag.outputs.PREVIOUS_SERVER_TAG }}
           echo "Current server tag: $current_server_tag"
           echo "Previous server tag: $previous_server_tag"
@@ -130,7 +130,9 @@ jobs:
       - name: Print fetched tags
         run: |
           echo "Current image tag: ${{ steps.fetch-latest-release-tags.outputs.tag_name }} ; target_commit: ${{ steps.fetch-latest-release-tags.outputs.target_commitish }}"
-          echo "Incremented image tag: ${{ steps.increment-release-tag.outputs.new_repo_version }}"
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "Incremented image tag: ${{ steps.increment-release-tag.outputs.new_repo_version }}"
+          fi
 
       - name: Set docker image tags
         id: set-tags
@@ -160,12 +162,12 @@ jobs:
           elif [ "${{ inputs.repo }}" = "op-admin-dashboard" ]; then
             echo "Current admin-dash image tag: ${{ steps.set-tags.outputs.ADMIN_DASH_IMAGE_TAG }}"
             echo "Latest server image tag (${{ github.event_name }}): ${{ steps.get-server-tag.outputs.SERVER_IMAGE_TAG }}"
-            echo "Latest server image target commitish: ${{ steps.get-server-tag.outputs.SERVER_IMAGE_TARGET }}"
+            # echo "Latest server image target commitish: ${{ steps.get-server-tag.outputs.SERVER_IMAGE_TARGET }}"
           elif [ "${{ inputs.repo }}" = "em-public-dashboard" ]; then            
             echo "Current notebook image tag (push): ${{ steps.set-tags.outputs.PUBLIC_DASH_NOTEBOOK_IMAGE_TAG }}"
             echo "Current frontend image tag (push): ${{ steps.set-tags.outputs.PUBLIC_DASH_FRONTEND_IMAGE_TAG }}"
             echo "Latest server image tag (${{ github.event_name }}): ${{ steps.get-server-tag.outputs.SERVER_IMAGE_TAG }}"
-            echo "Latest server image target commitish: ${{ steps.get-server-tag.outputs.SERVER_IMAGE_TARGET }}"
+            # echo "Latest server image target commitish: ${{ steps.get-server-tag.outputs.SERVER_IMAGE_TARGET }}"
           fi
 
       - name: docker login
