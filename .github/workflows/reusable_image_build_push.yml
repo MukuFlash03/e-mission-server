@@ -79,14 +79,17 @@ jobs:
           echo "Current server tag: $current_server_tag"
           echo "Previous server tag: $previous_server_tag"
 
-          current_server_tag_only=${current_server_tag:1}
-          previous_server_tag_only=${previous_server_tag:1}
+          # current_server_tag_only=${current_server_tag:1}
+          # previous_server_tag_only=${previous_server_tag:1}
 
-          echo "Current tag no v: $current_server_tag_only"
-          echo "Previous tag no v: $previous_server_tag_only"
+          # echo "Current tag no v: $current_server_tag_only"
+          # echo "Previous tag no v: $previous_server_tag_only"
 
-          IFS='.' read -r -a current <<< "${current_server_tag_only}"
-          IFS='.' read -r -a previous <<< "${previous_server_tag_only}"
+          # IFS='.' read -r -a current <<< "${current_server_tag_only}"
+          # IFS='.' read -r -a previous <<< "${previous_server_tag_only}"
+          
+          IFS='.' read -r -a current <<< "${current_server_tag}"
+          IFS='.' read -r -a previous <<< "${previous_server_tag}"
 
           if [[ ${#current[@]} -eq 3 && ${#previous[@]} -eq 3 ]]; then
             if [ "${current[0]}" -gt "${previous[0]}" ]; then
@@ -104,9 +107,11 @@ jobs:
           echo "name=version_change::$version_change"
 
           current_repo_version=${{ steps.fetch-latest-release-tags.outputs.tag_name }}
-          current_repo_version_only=${current_repo_version:1}
+          # current_repo_version_only=${current_repo_version:1}
 
-          IFS='.' read -r -a version_parts <<< "$current_repo_version_only"
+          # IFS='.' read -r -a version_parts <<< "$current_repo_version_only"
+          
+          IFS='.' read -r -a version_parts <<< "$current_repo_version"
 
           case "$version_change" in
             major)
@@ -123,7 +128,9 @@ jobs:
               ;;
           esac
 
-          new_repo_version="v${version_parts[0]}.${version_parts[1]}.${version_parts[2]}"
+          # new_repo_version="v${version_parts[0]}.${version_parts[1]}.${version_parts[2]}"
+          
+          new_repo_version="${version_parts[0]}.${version_parts[1]}.${version_parts[2]}"
           echo "new_repo_version::$new_repo_version"
           echo "new_repo_version=$new_repo_version" >> "$GITHUB_OUTPUT"
 
@@ -187,7 +194,10 @@ jobs:
             docker build -t $DOCKER_USER/${{ inputs.repo }}:${{ steps.fetch-latest-release-tags.outputs.tag_name }} .
             # docker build -t $DOCKER_USER/${{ inputs.repo }}:${{ inputs.branch }}_${{ steps.fetch-latest-release-tags.outputs.tag_name }} .
           elif [ "${{ inputs.repo }}" = "nrel-openpath-join-page" ]; then
-            docker build -t $DOCKER_USER/${{ inputs.repo }}:${{ steps.fetch-latest-release-tags.outputs.tag_name }} ./frontend
+            if [ "${{ github.event_name }}" == "push" ]; then
+              docker build -t $DOCKER_USER/${{ inputs.repo }}:${{ steps.fetch-latest-release-tags.outputs.tag_name }} ./frontend
+            elif [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+              docker build -t $DOCKER_USER/${{ inputs.repo }}:${{ steps.increment-release-tag.outputs.new_repo_version }} ./frontend
           elif [ "${{ inputs.repo }}" = "op-admin-dashboard" ]; then
             SERVER_IMAGE_TAG=${{ steps.get-server-tag.outputs.SERVER_IMAGE_TAG }} docker compose -f docker-compose-prod.yml build
           elif [ "${{ inputs.repo }}" = "em-public-dashboard" ]; then            
