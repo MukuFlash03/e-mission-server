@@ -73,13 +73,17 @@ jobs:
           EOF2
 
           latest_tag=$(git describe --abbrev=0 --tags)
-          previous_tag=$(git describe --abbrev=0 --tags --exclude="$(git describe --abbrev=0 --tags))
+          previous_tag=$(git describe --abbrev=0 --tags --exclude="$(git describe --abbrev=0 --tags)")
           
           echo "SERVER_IMAGE_TAG=$latest_tag" >> "$GITHUB_OUTPUT"
           echo "PREVIOUS_SERVER_TAG=$previous_tag" >> "$GITHUB_OUTPUT"
           
           echo "Latest server tag: $latest_tag"
           echo "Previous server tag: $previous_tag"
+
+          SECOND_LATEST_TAG=$(git describe --abbrev=0 --tags $(git rev-list --tags --skip=1 --max-count=1))
+          echo "Second latest tag: $SECOND_LATEST_TAG"
+
 
       - name: Bump up release tag
         # if: ${{ inputs.repo == 'op-admin-dashboard' || inputs.repo == 'em-public-dashboard' }}
