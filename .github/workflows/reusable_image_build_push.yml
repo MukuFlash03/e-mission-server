@@ -24,6 +24,7 @@ jobs:
           repository: MukuFlash03/${{ inputs.repo }}
           ref: ${{ inputs.branch }}
           token: ${{ secrets.GH_FG_PAT_TAGS }}
+          fetch-depth: 0
 
       - name: Fetch latest repository release tag
         id: fetch-latest-release-tags
@@ -80,8 +81,8 @@ jobs:
           echo "Latest server tag: $latest_tag"
           echo "Previous server tag: $previous_tag"
 
-          # SECOND_LATEST_TAG=$(git describe --abbrev=0 --tags $(git rev-list --tags --skip=1 --max-count=1))
-          # echo "Second latest tag: $SECOND_LATEST_TAG"
+          SECOND_LATEST_TAG=$(git describe --abbrev=0 --tags $(git rev-list --tags --skip=1 --max-count=1))
+          echo "Second latest tag: $SECOND_LATEST_TAG"
 
 
       - name: Bump up release tag
