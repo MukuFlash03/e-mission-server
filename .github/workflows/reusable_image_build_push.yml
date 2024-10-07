@@ -81,10 +81,6 @@ jobs:
           echo "Latest server tag: $latest_tag"
           echo "Previous server tag: $previous_tag"
 
-          SECOND_LATEST_TAG=$(git describe --abbrev=0 --tags $(git rev-list --tags --skip=1 --max-count=1))
-          echo "Second latest tag: $SECOND_LATEST_TAG"
-
-
       - name: Bump up release tag
         # if: ${{ inputs.repo == 'op-admin-dashboard' || inputs.repo == 'em-public-dashboard' }}
         # if: ${{ inputs.repo == 'op-admin-dashboard' || inputs.repo == 'em-public-dashboard' || inputs.repo == 'nrel-openpath-join-page'}} 
