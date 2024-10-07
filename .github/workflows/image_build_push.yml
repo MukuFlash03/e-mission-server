@@ -90,6 +90,7 @@ jobs:
     secrets: inherit  
 
   dispatch:
+    if: ${{ github.ref_type == 'tag' }}
     needs: [build]
     runs-on: ubuntu-latest
 

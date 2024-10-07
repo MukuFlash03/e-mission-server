@@ -200,7 +200,7 @@ jobs:
           docker images
 
       - name: rename docker image
-        if: ${{ github.ref_type == 'tag' }}
+        if: ${{ github.ref_type == 'tag' || github.event_name == 'workflow_dispatch' }}
         run: |
           if [ "${{ inputs.repo }}" = "op-admin-dashboard" ]; then
             if [ "${{ github.event_name }}" == "push" ]; then
@@ -223,7 +223,7 @@ jobs:
           fi
   
       - name: push docker image
-        if: ${{ github.ref_type == 'tag' }}
+        if: ${{ github.ref_type == 'tag' || github.event_name == 'workflow_dispatch' }}
         run: |
           if [ "${{ inputs.repo }}" = "em-public-dashboard" ]; then      
             if [ "${{ github.event_name }}" == "push" ]; then
@@ -249,7 +249,7 @@ jobs:
           fi
         
       - name: Update .env file 
-        if: ${{ github.ref_type == 'tag' }}
+        if: ${{ github.ref_type == 'tag' || github.event_name == 'workflow_dispatch' }}
         run: |
           if [ "${{ inputs.repo }}" = "e-mission-server" ]; then
             echo "SERVER_IMAGE_TAG=${{ steps.fetch-latest-release-tags.outputs.tag_name }}" > .env
@@ -289,7 +289,7 @@ jobs:
           cat .env
 
       - name: Add, Commit, Push changes to .env file
-        if: ${{ github.ref_type == 'tag' }}
+        if: ${{ github.ref_type == 'tag' || github.event_name == 'workflow_dispatch' }}
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "Github Actions bot to update .env with latest tags"
