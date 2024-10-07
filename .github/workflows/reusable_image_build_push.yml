@@ -56,8 +56,8 @@ jobs:
             "https://api.github.com/repos/MukuFlash03/e-mission-server/git/refs/tags")
           # "https://api.github.com/repos/MukuFlash03/e-mission-server/releases/latest")
 
-          # SERVER_IMAGE_TAG=$(echo "$response" | jq -r '.tag_name')
           # SERVER_IMAGE_TARGET=$(echo "$response" | jq -r '.target_commitish')
+          # SERVER_IMAGE_TAG=$(echo "$response" | jq -r '.tag_name')
           
           # echo "SERVER_IMAGE_TAG=$(echo "$response" | jq -r '.tag_name')" >> "$GITHUB_OUTPUT"
           # echo "SERVER_IMAGE_TARGET=$(echo "$response" | jq -r '.target_commitish')" >> "$GITHUB_OUTPUT"
