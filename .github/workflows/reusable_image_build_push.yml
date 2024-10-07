@@ -50,6 +50,7 @@ jobs:
           echo "SERVER_IMAGE_TAG=$SERVER_IMAGE_TAG" >> "$GITHUB_OUTPUT"
           EOF
 
+          : << EOF2
           response=$(curl -L -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer ${{ secrets.GH_FG_PAT_TAGS }}" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
@@ -65,12 +66,23 @@ jobs:
           tags=$(echo "$response" | jq -r '.[].ref' | cut -d'/' -f3)
           latest_tag=$(echo "$tags" | sort -V | tail -n 1)
           previous_tag=$(echo "$tags" | sort -V | tail -n 2 | head -n 1)
-
-          SECOND_LATEST_TAG=$(git describe --abbrev=0 --tags $(git rev-list --tags --skip=1 --max-count=1))
-          echo "Second latest tag: $SECOND_LATEST_TAG"
-
+          
           echo "SERVER_IMAGE_TAG=$latest_tag" >> "$GITHUB_OUTPUT"
           echo "PREVIOUS_SERVER_TAG=$previous_tag" >> "$GITHUB_OUTPUT"
+          EOF2
+
+          latest_tag=$(git describe --abbrev=0 --tags)
+          previous_tag=$(git describe --abbrev=0 --tags --exclude="$(git describe --abbrev=0 --tags))
+          
+          echo "SERVER_IMAGE_TAG=$latest_tag" >> "$GITHUB_OUTPUT"
+          echo "PREVIOUS_SERVER_TAG=$previous_tag" >> "$GITHUB_OUTPUT"
+          
+          echo "Latest server tag: $latest_tag"
+          echo "Previous server tag: $previous_tag"
+
+          # SECOND_LATEST_TAG=$(git describe --abbrev=0 --tags $(git rev-list --tags --skip=1 --max-count=1))
+          # echo "Second latest tag: $SECOND_LATEST_TAG"
+
 
       - name: Bump up release tag
         # if: ${{ inputs.repo == 'op-admin-dashboard' || inputs.repo == 'em-public-dashboard' }}
