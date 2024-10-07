@@ -42,7 +42,7 @@ jobs:
       - name: Fetch latest server image tag
         id: get-server-tag
         # if: ${{ inputs.repo == 'op-admin-dashboard' || inputs.repo == 'em-public-dashboard' }}
-        if: ${{ inputs.repo == 'op-admin-dashboard' || inputs.repo == 'em-public-dashboard' || inputs.repo == 'nrel-openpath-join-page'}} 
+        if: ${{ inputs.repo == 'op-admin-dashboard' || inputs.repo == 'em-public-dashboard' || inputs.repo == 'nrel-openpath-join-page' }} 
         run: |
           : << EOF
           response=$(curl -s https://raw.githubusercontent.com/MukuFlash03/e-mission-server/refs/heads/cleanup-cicd/.env)
@@ -66,12 +66,16 @@ jobs:
           latest_tag=$(echo "$tags" | sort -V | tail -n 1)
           previous_tag=$(echo "$tags" | sort -V | tail -n 2 | head -n 1)
 
+          SECOND_LATEST_TAG=$(git describe --abbrev=0 --tags $(git rev-list --tags --skip=1 --max-count=1))
+          echo "Second latest tag: $SECOND_LATEST_TAG"
+
           echo "SERVER_IMAGE_TAG=$latest_tag" >> "$GITHUB_OUTPUT"
           echo "PREVIOUS_SERVER_TAG=$previous_tag" >> "$GITHUB_OUTPUT"
 
       - name: Bump up release tag
         # if: ${{ inputs.repo == 'op-admin-dashboard' || inputs.repo == 'em-public-dashboard' }}
-        if: ${{ inputs.repo == 'op-admin-dashboard' || inputs.repo == 'em-public-dashboard' || inputs.repo == 'nrel-openpath-join-page'}} 
+        # if: ${{ inputs.repo == 'op-admin-dashboard' || inputs.repo == 'em-public-dashboard' || inputs.repo == 'nrel-openpath-join-page'}} 
+        if: ${{ github.event_name == 'workflow_dispatch' }} 
         id: increment-release-tag
         run: |
           current_server_tag=${{ steps.get-server-tag.outputs.SERVER_IMAGE_TAG }}
