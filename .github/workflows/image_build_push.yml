@@ -3,8 +3,10 @@ name: docker image
 on:
   push:
     branches: [ master, gis-based-mode-detection, cleanup-cicd ]
-    tags:
-      - "v[0-9]+.[0-9]+.[0-9]+"
+    # tags:
+    #   - "v[0-9]+.[0-9]+.[0-9]+"
+  release:
+    types: [published]
 
 #Dockerhub credentials are set as environment variables
 env:
