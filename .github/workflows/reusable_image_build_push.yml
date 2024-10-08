@@ -24,6 +24,7 @@ jobs:
           repository: MukuFlash03/${{ inputs.repo }}
           ref: ${{ inputs.branch }}
           token: ${{ secrets.GH_FG_PAT_TAGS }}
+          fetch-depth: 0
 
       - name: Fetch latest repository release tag
         id: fetch-latest-release-tags
@@ -293,8 +294,7 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "Github Actions bot to update .env with latest tags"
-          git tag -a ${{ steps.increment-release-tag.outputs.new_repo_version }} \
-           -m "$(git log --pretty=format:%s ${{ steps.set-tags.outputs.CURRENT_REPO_TAG }}...HEAD --no-merges)"
+          git tag -a ${{ steps.increment-release-tag.outputs.new_repo_version }} -m"$(git log --pretty=format:%s ${{ steps.set-tags.outputs.CURRENT_REPO_TAG }}...HEAD --no-merges)"
           
           git push origin ${{ steps.increment-release-tag.outputs.new_repo_version }}
 
@@ -307,12 +307,7 @@ jobs:
             -H "Authorization: Bearer ${{ secrets.GH_FG_PAT_TAGS }}" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
             https://api.github.com/repos/MukuFlash03/${{ inputs.repo }}/releases \
-            -d '{"tag_name":${{ steps.increment-release-tag.outputs.new_repo_version }}, \
-                  "target_commitish":${{ inputs.branch }}, \
-                  "name":${{ steps.increment-release-tag.outputs.new_repo_version }}, \
-                  "body":"Triggered on e-mission-server new release. Bumping up release version for ${{ inputs.repo}}", \
-                  "generate_release_notes":true \
-                }'
+            -d '{"tag_name":${{ steps.increment-release-tag.outputs.new_repo_version }},"target_commitish":${{ inputs.branch }},"name":${{ steps.increment-release-tag.outputs.new_repo_version }},"body":"Triggered on e-mission-server new release. Bumping up release version.","generate_release_notes":true}'
 
           echo "Logging latest created release"
 
