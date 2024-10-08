@@ -168,10 +168,6 @@ jobs:
             echo "Latest server image tag (${{ github.event_name }}): ${{ steps.get-server-tag.outputs.SERVER_IMAGE_TAG }}"
           fi
 
-      # - name: docker login
-      #   run: |
-      #     docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
-      
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
