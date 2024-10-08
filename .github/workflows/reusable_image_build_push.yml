@@ -190,14 +190,14 @@ jobs:
         run: |
           if [ "${{ inputs.repo }}" = "e-mission-server" ]; then
             # docker build -t $DOCKER_USER/${{ inputs.repo }}:${{ steps.fetch-latest-release-tags.outputs.tag_name }} .
-            docker build -t ghcr.io/mukuflash03/${{ inputs.repo }}/${{ inputs.repo }}:${{ steps.fetch-latest-release-tags.outputs.tag_name }} .
+            docker build -t ghcr.io/mukuflash03/${{ inputs.repo }}:${{ steps.fetch-latest-release-tags.outputs.tag_name }} .
           elif [ "${{ inputs.repo }}" = "nrel-openpath-join-page" ]; then
             if [ "${{ github.event_name }}" == "release" ]; then
               # docker build -t $DOCKER_USER/${{ inputs.repo }}:${{ steps.fetch-latest-release-tags.outputs.tag_name }} ./frontend
-              docker build -t ghcr.io/mukuflash03/${{ inputs.repo }}/${{ inputs.repo }}:${{ steps.fetch-latest-release-tags.outputs.tag_name }} ./frontend
+              docker build -t ghcr.io/mukuflash03/${{ inputs.repo }}:${{ steps.fetch-latest-release-tags.outputs.tag_name }} ./frontend
             elif [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
               # docker build -t $DOCKER_USER/${{ inputs.repo }}:${{ steps.increment-release-tag.outputs.new_repo_version }} ./frontend
-              docker build -t ghcr.io/mukuflash03/${{ inputs.repo }}/${{ inputs.repo }}:${{ steps.increment-release-tag.outputs.new_repo_version }} ./frontend
+              docker build -t ghcr.io/mukuflash03/${{ inputs.repo }}:${{ steps.increment-release-tag.outputs.new_repo_version }} ./frontend
             fi
           elif [ "${{ inputs.repo }}" = "op-admin-dashboard" ]; then
             SERVER_IMAGE_TAG=${{ steps.get-server-tag.outputs.SERVER_IMAGE_TAG }} docker compose -f docker-compose-prod.yml build
@@ -212,20 +212,20 @@ jobs:
           if [ "${{ inputs.repo }}" = "op-admin-dashboard" ]; then
             if [ "${{ github.event_name }}" == "release" ]; then
               # docker image tag e-mission/opdash:0.0.1 $DOCKER_USER/${{ inputs.repo }}:${{ steps.fetch-latest-release-tags.outputs.tag_name }}
-              docker tag e-mission/opdash:0.0.1 ghcr.io/mukuflash03/${{ inputs.repo }}/${{ inputs.repo }}:${{ steps.fetch-latest-release-tags.outputs.tag_name }}
+              docker tag e-mission/opdash:0.0.1 ghcr.io/mukuflash03/${{ inputs.repo }}:${{ steps.fetch-latest-release-tags.outputs.tag_name }}
             elif [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
               # docker image tag e-mission/opdash:0.0.1 $DOCKER_USER/${{ inputs.repo }}:${{ steps.increment-release-tag.outputs.new_repo_version }}
-              docker tag e-mission/opdash:0.0.1 ghcr.io/mukuflash03/${{ inputs.repo }}/${{ inputs.repo }}:${{ steps.increment-release-tag.outputs.new_repo_version }}
+              docker tag e-mission/opdash:0.0.1 ghcr.io/mukuflash03/${{ inputs.repo }}:${{ steps.increment-release-tag.outputs.new_repo_version }}
             fi
           elif [ "${{ inputs.repo }}" = "em-public-dashboard" ]; then      
             if [ "${{ github.event_name }}" == "release" ]; then
               # docker image tag em-pub-dash-prod/frontend:latest $DOCKER_USER/${{ inputs.repo }}_frontend:${{ steps.fetch-latest-release-tags.outputs.tag_name }}
               # docker image tag em-pub-dash-prod/viz-scripts:latest $DOCKER_USER/${{ inputs.repo }}_notebook:${{ steps.fetch-latest-release-tags.outputs.tag_name }}
-              docker tag em-pub-dash-prod/frontend:latest ghcr.io/mukuflash03/${{ inputs.repo }}/${{ inputs.repo }}_frontend:${{ steps.fetch-latest-release-tags.outputs.tag_name }}
-              docker tag em-pub-dash-prod/viz-scripts:latest ghcr.io/mukuflash03/${{ inputs.repo }}/${{ inputs.repo }}_notebook:${{ steps.fetch-latest-release-tags.outputs.tag_name }}
+              docker tag em-pub-dash-prod/frontend:latest ghcr.io/mukuflash03/${{ inputs.repo }}_frontend:${{ steps.fetch-latest-release-tags.outputs.tag_name }}
+              docker tag em-pub-dash-prod/viz-scripts:latest ghcr.io/mukuflash03/${{ inputs.repo }}_notebook:${{ steps.fetch-latest-release-tags.outputs.tag_name }}
             elif [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
               # docker image tag em-pub-dash-prod/viz-scripts:latest $DOCKER_USER/${{ inputs.repo }}_notebook:${{ steps.increment-release-tag.outputs.new_repo_version }}
-              docker tag em-pub-dash-prod/viz-scripts:latest ghcr.io/mukuflash03/${{ inputs.repo }}/${{ inputs.repo }}_notebook:${{ steps.increment-release-tag.outputs.new_repo_version }}
+              docker tag em-pub-dash-prod/viz-scripts:latest ghcr.io/mukuflash03/${{ inputs.repo }}_notebook:${{ steps.increment-release-tag.outputs.new_repo_version }}
             fi
           fi
   
@@ -236,23 +236,23 @@ jobs:
             if [ "${{ github.event_name }}" == "release" ]; then
               # docker push $DOCKER_USER/${{ inputs.repo }}_frontend:${{ steps.fetch-latest-release-tags.outputs.tag_name }}
               # docker push $DOCKER_USER/${{ inputs.repo }}_notebook:${{ steps.fetch-latest-release-tags.outputs.tag_name }}
-              docker push ghcr.io/mukuflash03/${{ inputs.repo }}/${{ inputs.repo }}_frontend:${{ steps.fetch-latest-release-tags.outputs.tag_name }}
-              docker push ghcr.io/mukuflash03/${{ inputs.repo }}/${{ inputs.repo }}_notebook:${{ steps.fetch-latest-release-tags.outputs.tag_name }}
+              docker push ghcr.io/mukuflash03/${{ inputs.repo }}_frontend:${{ steps.fetch-latest-release-tags.outputs.tag_name }}
+              docker push ghcr.io/mukuflash03/${{ inputs.repo }}_notebook:${{ steps.fetch-latest-release-tags.outputs.tag_name }}
             elif [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
               # docker push $DOCKER_USER/${{ inputs.repo }}_notebook:${{ steps.increment-release-tag.outputs.new_repo_version }}
-              docker push ghcr.io/mukuflash03/${{ inputs.repo }}/${{ inputs.repo }}_notebook:${{ steps.increment-release-tag.outputs.new_repo_version }}
+              docker push ghcr.io/mukuflash03/${{ inputs.repo }}_notebook:${{ steps.increment-release-tag.outputs.new_repo_version }}
             fi
           elif [ "${{ inputs.repo }}" = "op-admin-dashboard" ] || [ "${{ inputs.repo }}" = "nrel-openpath-join-page" ]; then
             if [ "${{ github.event_name }}" == "release" ]; then
               # docker push $DOCKER_USER/${{ inputs.repo }}:${{ steps.fetch-latest-release-tags.outputs.tag_name }}
-              docker push ghcr.io/mukuflash03/${{ inputs.repo }}/${{ inputs.repo }}:${{ steps.fetch-latest-release-tags.outputs.tag_name }}
+              docker push ghcr.io/mukuflash03/${{ inputs.repo }}:${{ steps.fetch-latest-release-tags.outputs.tag_name }}
             elif [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
               # docker push $DOCKER_USER/${{ inputs.repo }}:${{ steps.increment-release-tag.outputs.new_repo_version }}
-              docker push ghcr.io/mukuflash03/${{ inputs.repo }}/${{ inputs.repo }}:${{ steps.increment-release-tag.outputs.new_repo_version }}
+              docker push ghcr.io/mukuflash03/${{ inputs.repo }}:${{ steps.increment-release-tag.outputs.new_repo_version }}
             fi
           else
             # docker push $DOCKER_USER/${{ inputs.repo }}:${{ steps.fetch-latest-release-tags.outputs.tag_name }}
-            docker push ghcr.io/mukuflash03/${{ inputs.repo }}/${{ inputs.repo }}:${{ steps.fetch-latest-release-tags.outputs.tag_name }}
+            docker push ghcr.io/mukuflash03/${{ inputs.repo }}:${{ steps.fetch-latest-release-tags.outputs.tag_name }}
           fi
         
       - name: Update .env file 
