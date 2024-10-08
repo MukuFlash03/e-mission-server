@@ -55,7 +55,7 @@ jobs:
             -H "X-GitHub-Api-Version: 2022-11-28" \
             "https://api.github.com/repos/MukuFlash03/e-mission-server/releases")
 
-          tags=$(echo "$response_r" | jq -r '.[].tag_name')
+          tags=$(echo "$response" | jq -r '.[].tag_name')
           current_server_release_tag=$(echo "$tags" | sort -V | tail -n 1)
           previous_server_release_tag=$(echo "$tags" | sort -V | tail -n 2 | head -n 1)
           
