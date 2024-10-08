@@ -74,6 +74,7 @@ jobs:
         run: |
           current_server_tag=${{ steps.get-server-tag.outputs.SERVER_IMAGE_TAG }}
           previous_server_tag=${{ steps.get-server-tag.outputs.PREVIOUS_SERVER_TAG }}
+          
           echo "Current server tag: $current_server_tag"
           echo "Previous server tag: $previous_server_tag"
 
