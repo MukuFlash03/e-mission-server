@@ -306,7 +306,7 @@ jobs:
             -H "Authorization: Bearer ${{ secrets.GH_FG_PAT_TAGS }}" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
             https://api.github.com/repos/MukuFlash03/${{ inputs.repo }}/releases \
-            -d '{"tag_name":${{ steps.increment-release-tag.outputs.new_repo_version }},"target_commitish":${{ inputs.branch }},"name":${{ steps.increment-release-tag.outputs.new_repo_version }},"body":"Triggered on e-mission-server new release. Bumping up release version.","generate_release_notes":true}'
+            -d '{"tag_name":"${{ steps.increment-release-tag.outputs.new_repo_version }}","target_commitish":"${{ inputs.branch }}","name":"${{ steps.increment-release-tag.outputs.new_repo_version }}","body":"Triggered on e-mission-server new release. Bumping up release version.","generate_release_notes":true}'
 
           echo "Logging latest created release"
 
